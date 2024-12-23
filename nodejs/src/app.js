@@ -12,6 +12,13 @@ const app = express();
 
 //Importacion de modulos de rutas
 const clientesRoute = require('./routes/clientes.routes');
+const rolRoute = require('./routes/rol.routes');
+const estadosRoute = require('./routes/estados.routes');
+const usuariosRoute = require('./routes/usuarios.routes');
+const categoriaProductosRoute = require('./routes/categoriaProductos.routes');
+const ordenRoute = require('./routes/orden.routes');
+const productosRoute = require('./routes/productos.routes');
+const ordenDetalleRoute = require('./routes/ordenDetalle.routes');
 
 //morgarn
 app.use(morgan('tiny'))
@@ -23,7 +30,13 @@ app.use(express.json());
 
 // Rutas de 
 app.use('/', clientesRoute);
-
+app.use('/', rolRoute);
+app.use('/', estadosRoute);
+app.use('/', usuariosRoute);
+app.use('/', categoriaProductosRoute);
+app.use('/', ordenRoute);
+app.use('/', productosRoute);
+app.use('/', ordenDetalleRoute);
 
 // Puerto de escucha
 const PORT = process.env.PORT || 4000;

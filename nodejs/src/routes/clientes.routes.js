@@ -5,7 +5,7 @@ const {obtenerTodosClientes, obtenerClientesPorId, crearClientes, actualizarClie
 router.get('/listaCliente', obtenerTodosClientes);
 router.get('/:id', obtenerClientesPorId);
 router.post('/crearCliente', crearClientes);
-router.put('/:id', actualizarClientes);
+router.put('/actualizarCliente', actualizarClientes);
 router.delete('/:id', borrarClientes);
 
 module.exports = router;

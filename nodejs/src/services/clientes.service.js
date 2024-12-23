@@ -1,4 +1,5 @@
 //const {connection} = require('../config/database');
+const sequelize = require('../config/database');
 const clientes = require('../models/clientes.model');
 
 exports.obtenerTodosClientes = async () => {
@@ -22,25 +23,54 @@ exports.obtenerClientesPorId = async (idCliente) => {
  * @param {*} nuevoCliente 
  * @returns 
  */
-exports.crearClientes = async (nuevoCliente)=>{
-    /*let conexion;
-    try {
-          conexion = await connection();
-    } catch (error) {
-          return {status:503, data:{error:`Erro al conectar a la base de datos: ${error}`}};
-    }
-    */
-    let clienteCreado = await clientes.create(nuevoCliente);
+exports.crearClientes = async (datoCliente)=>{
 
-    return {mensaje:'Cliente creado exitosamente',data:clienteCreado};
+        try {
+        const {razonSocial, nombreComercial, direccionEntrega, telefono, email} = datoCliente
+        const result = await sequelize.query(
+            'EXEC spInsertarCliente :razonSocial, :nombreComercial, :direccionEntrega, :telefono, :email',
+            {
+              replacements: {
+                razonSocial,
+                nombreComercial,
+                direccionEntrega,
+                telefono,
+                email,
+              },
+              type: sequelize.QueryTypes.RAW, // No es necesario cambiar el tipo aquí
+            }
+          );
+          return {mensaje:'Cliente creado exitosamente',data:result};
+        } catch (error) {
+        
+          return {error:`Error al llamar al procedimiento almacenado: ${error}`};
+        }
 };
 
-exports.actualizarClientes = async (idCliente, datosNuevoCliente) => {
-    const actualizarCliente = await clientes.findByPk(idCliente);
-    if (actualizarCliente) {
-        return await actualizarCliente.update(datosNuevoCliente);
+exports.actualizarClientes = async (datoClienteModificar) => {
+
+    const {idClientes, razonSocial, nombreComercial, direccionEntrega, telefono, email} = datoClienteModificar;
+    
+    try {
+        const result = await sequelize.query(
+        'EXEC spModificarCliente :idClientes, :razonSocial, :nombreComercial, :direccionEntrega, :telefono, :email',
+        {
+            replacements: {
+            idClientes,
+            razonSocial,
+            nombreComercial,
+            direccionEntrega,
+            telefono,
+            email,
+            },
+            type: sequelize.QueryTypes.RAW,
+        }
+        );
+        return {mensaje:'Cliente modificado correctamente', data:result};
+    } catch (error) {
+        return {error: `Error al modificar el cliente: error`};
     }
-    return null;
+    
 };
 
 exports.borrarClientes = async (idCliente) => {
