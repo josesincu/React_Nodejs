@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const verificarToken = require('../middlewares/verificarToken');
+
 const {obtenerTodosClientes, obtenerClientesPorId, crearClientes, actualizarClientes, borrarClientes} = require('../controllers/clientes.controller');
 
-router.get('/listaCliente', obtenerTodosClientes);
-router.get('/:id', obtenerClientesPorId);
-router.post('/crearCliente', crearClientes);
-router.put('/actualizarCliente', actualizarClientes);
-router.delete('/:id', borrarClientes);
+router.get('/listaCliente', verificarToken, obtenerTodosClientes);
+router.get('/:id', verificarToken, obtenerClientesPorId);
+router.post('/crearCliente', verificarToken, crearClientes);
+router.put('/actualizarCliente', verificarToken, actualizarClientes);
+router.delete('/:id', verificarToken, borrarClientes);
 
 module.exports = router;

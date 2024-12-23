@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const verificarToken = require('../middlewares/verificarToken');
 const {obtenerTodosEstados, obtenerEstadosPorId, crearEstados, actualizarEstados, borrarEstados} = require('../controllers/estados.controller');
 
-router.get('/listaEstado', obtenerTodosEstados);
-router.get('/:id', obtenerEstadosPorId);
-router.post('/crearEstado', crearEstados);
-router.put('/actualizarEstado', actualizarEstados);
-router.delete('/:id', borrarEstados);
+router.get('/listaEstado', verificarToken, obtenerTodosEstados);
+router.get('/:id', verificarToken, obtenerEstadosPorId);
+router.post('/crearEstado', verificarToken, crearEstados);
+router.put('/actualizarEstado', verificarToken, actualizarEstados);
+router.delete('/:id', verificarToken, borrarEstados);
 
 module.exports = router;
