@@ -1,0 +1,90 @@
+=============================================
+Clave de aspirante: GDA0063-OT
+Grupo de clase: A
+=============================================
+
+
+Reto primer semana:
+
+
+Debes de crear la base de datos, atendiendo
+al siguiente esquema Entidad-Relación:
+(imagen adjunta)
+
+
+
+
+
+
+Atender los siguientes lineamientos
+
+
+1.     Crear base de datos, nombre
+clave asignada + nombre apellido
+
+2. Creación de Tablas (Se adjunta sugerencia para realización de
+Tablas)
+
+3. Creación de Campos (Se adjunta sugerencia para realización de
+Tablas) 
+
+4. Creación de Relaciones (Se adjunta sugerencia para
+realización de las relaciones)
+
+5. Creación de Procedimientos Almacenados (Deberás
+insertar información y actualización de datos de todas las tablas de todos los
+campos).
+
+
+Tomar en cuenta que los procedimientos almacenados nos
+servirán para poder insertar, editar los registros de nuestro sistema, por lo
+cual deberás de crear un procedimiento almacenado por cada acción, ejemplo:
+
+
+               Procedimiento
+almacenado para insertar usuarios nuevos: Recibirás los parámetros de entrada
+rol_idrol, correo, nombre_completo, password, etc. Y los parámetros que recibas
+de entrada los insertas en la tabla dentro del procedimiento.
+
+
+               Procedimiento
+almacenado para inactivar productos: recibirás los parámetros de entrada,
+idproducto, idestado, y actualizarás el registro dentro del procedimiento
+almacenado.
+
+
+
+
+6. Realización de Consultas (Dejar las consultas como  “vistas” en la base de datos, no como archivos
+adicionales)
+
+      a Total de Productos activos que tenga
+en stock mayor a 0 
+
+      b Total de Quetzales en ordenes
+ingresadas en el mes de Agosto 2024
+
+      c Top 10 de clientes con Mayor consumo
+de ordenes de todo el histórico
+
+      d Top 10 de productos más vendidos en
+orden ascendente
+
+
+
+Deberás adjunta un script con la definición de tu base de datos, y registros de
+ejemplos que hayas creado, procedimientos almacenados y vistas de las
+consultas. En este caso deberás enviar solo 1 único archivo con extensión .sql.
+
+
+ 
+
+
+Ejemplo.
+
+
+Clave
++’-’+nombre_apellido.sql
+
+
+5555-DaniloLopez.sql
