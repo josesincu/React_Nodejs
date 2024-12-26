@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const verificarToken = require('../middlewares/verificarToken');
+const verificarToken = require('../middlewares/verificacionToken');
 
 const {obtenerTodosCategoriaProductos, obtenerCategoriaProductosPorId, crearCategoriaProductos, actualizarCategoriaProductos, borrarCategoriaProductos} = require('../controllers/categoriaProductos.controller');
 

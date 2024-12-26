@@ -1,0 +1,550 @@
+CREATE TABLE dbo.clientes (
+        idClientes INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+        razonSocial VARCHAR(245),
+		nombreComercial VARCHAR(34),
+		direccionEntrega VARCHAR(45),
+		telefono VARCHAR(45),
+		email	VARCHAR(45)
+    
+);
+
+CREATE TABLE dbo.estados (
+        idEstados INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+        nombre VARCHAR(45)
+);
+
+CREATE TABLE dbo.rol (
+        idRol INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+        nombre VARCHAR(45)
+);
+
+CREATE TABLE dbo.usuarios (
+        idUsuarios INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+		idRol INT NOT NULL FOREIGN KEY REFERENCES rol(idRol),
+		idEstados INT NOT NULL FOREIGN KEY REFERENCES estados(idEstados),
+		correoElectronico VARCHAR(45),
+		nombreCompleto VARCHAR(50),
+		password	VARCHAR(45),
+		telefono VARCHAR(45),
+		fechaNacimiento DATE,
+		fechaCreacion	DATETIME,
+		idClientes INT FOREIGN KEY REFERENCES clientes(idClientes)
+);
+
+CREATE TABLE dbo.categoriaProductos (
+        idCategoriaProductos INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+		idUsuarios INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuarios),
+		nombre VARCHAR(45),
+		idEstados INT NOT NULL FOREIGN KEY REFERENCES estados(idEstados),
+		fechaCreacion	DATETIME
+);
+
+CREATE TABLE dbo.orden (
+        idOrden INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+		idUsuarios INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuarios),
+		idEstados INT NOT NULL FOREIGN KEY REFERENCES estados(idEstados),
+		fechaCreacion	DATETIME,
+		nombreCompleto	VARCHAR(50),
+		direccion	VARCHAR(545),
+		telefono	VARCHAR(45),
+		correoElectronico	VARCHAR(45),
+		fechaEntrega	DATE,
+		totalOrden FLOAT
+);
+
+CREATE TABLE dbo.productos (
+        idProductos INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+		idCategoriaProductos INT NOT NULL FOREIGN KEY REFERENCES categoriaProductos(idCategoriaProductos),
+		idUsuarios INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuarios),
+		nombre VARCHAR(45),
+		marca	VARCHAR(45),
+		codigo	VARCHAR(45),
+		stock FLOAT,
+		idEstados INT NOT NULL FOREIGN KEY REFERENCES estados(idEstados),
+		precio FLOAT,
+		fechaCreacion DATETIME,
+		foto BINARY
+);
+
+CREATE TABLE dbo.ordenDetalles (
+        idOrdenDetalles INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+		idOrden INT NOT NULL FOREIGN KEY REFERENCES orden(idOrden),
+		idProductos INT NOT NULL FOREIGN KEY REFERENCES productos(idProductos),
+		cantidad INT,
+		precio FLOAT,
+		subtotal FLOAT
+);
+
+=================================== INSERT EN TABLAS ===========================================================
+-- Insertar datos en la tabla estados
+INSERT INTO dbo.estados (nombre) VALUES
+('Activo'), ('Inactivo'), ('Pendiente'), ('Cancelado'), ('Completado'), ('En proceso'), ('Suspendido'), ('Finalizado'), ('Revisado'), ('Eliminado');
+
+-- Insertar datos en la tabla rol
+INSERT INTO dbo.rol (nombre) VALUES
+('Administrador'), ('Usuario'), ('Vendedor'), ('Cliente'), ('Soporte'), ('Gerente'), ('Supervisor'), ('Asistente'), ('Contador'), ('Operador');
+
+-- Insertar datos en la tabla clientes
+INSERT INTO dbo.clientes (razonSocial, nombreComercial, direccionEntrega, telefono, email) VALUES
+('Empresa A', 'Comercial A', 'Calle 1', '1234567890', 'empresaA@example.com'),
+('Empresa B', 'Comercial B', 'Calle 2', '1234567891', 'empresaB@example.com'),
+('Empresa C', 'Comercial C', 'Calle 3', '1234567892', 'empresaC@example.com'),
+('Empresa D', 'Comercial D', 'Calle 4', '1234567893', 'empresaD@example.com'),
+('Empresa E', 'Comercial E', 'Calle 5', '1234567894', 'empresaE@example.com'),
+('Empresa F', 'Comercial F', 'Calle 6', '1234567895', 'empresaF@example.com'),
+('Empresa G', 'Comercial G', 'Calle 7', '1234567896', 'empresaG@example.com'),
+('Empresa H', 'Comercial H', 'Calle 8', '1234567897', 'empresaH@example.com'),
+('Empresa I', 'Comercial I', 'Calle 9', '1234567898', 'empresaI@example.com'),
+('Empresa J', 'Comercial J', 'Calle 10', '1234567899', 'empresaJ@example.com');
+
+-- Insertar datos en la tabla usuarios
+INSERT INTO dbo.usuarios (idRol, idEstados, correoElectronico, nombreCompleto, password, telefono, fechaNacimiento, fechaCreacion, idClientes) VALUES
+(1, 1, 'admin@example.com', 'Admin User', 'pass123', '1234567890', '1990-01-01', GETDATE(), 1),
+(2, 2, 'user1@example.com', 'User One', 'pass123', '1234567891', '1991-02-01', GETDATE(), 2),
+(3, 3, 'user2@example.com', 'User Two', 'pass123', '1234567892', '1992-03-01', GETDATE(), 3),
+(4, 4, 'user3@example.com', 'User Three', 'pass123', '1234567893', '1993-04-01', GETDATE(), 4),
+(5, 5, 'user4@example.com', 'User Four', 'pass123', '1234567894', '1994-05-01', GETDATE(), 5),
+(6, 6, 'user5@example.com', 'User Five', 'pass123', '1234567895', '1995-06-01', GETDATE(), 6),
+(7, 7, 'user6@example.com', 'User Six', 'pass123', '1234567896', '1996-07-01', GETDATE(), 7),
+(8, 8, 'user7@example.com', 'User Seven', 'pass123', '1234567897', '1997-08-01', GETDATE(), 8),
+(9, 9, 'user8@example.com', 'User Eight', 'pass123', '1234567898', '1998-09-01', GETDATE(), 9),
+(10, 10, 'user9@example.com', 'User Nine', 'pass123', '1234567899', '1999-10-01', GETDATE(), 10);
+
+-- Insertar datos en la tabla categoriaProductos
+INSERT INTO dbo.categoriaProductos (idUsuarios, nombre, idEstados, fechaCreacion) VALUES
+(1, 'Electrónica', 1, GETDATE()),
+(2, 'Ropa', 2, GETDATE()),
+(3, 'Alimentos', 3, GETDATE()),
+(4, 'Muebles', 4, GETDATE()),
+(5, 'Libros', 5, GETDATE()),
+(6, 'Juguetes', 6, GETDATE()),
+(7, 'Herramientas', 7, GETDATE()),
+(8, 'Deportes', 8, GETDATE()),
+(9, 'Cosméticos', 9, GETDATE()),
+(10, 'Accesorios', 10, GETDATE());
+
+-- Insertar datos en la tabla productos
+INSERT INTO dbo.productos (idCategoriaProductos, idUsuarios, nombre, marca, codigo, stock, idEstados, precio, fechaCreacion, foto) VALUES
+(1, 1, 'Televisor', 'Samsung', 'TV001', 10, 1, 500.00, GETDATE(), 0x),
+(2, 2, 'Camiseta', 'Nike', 'CM002', 20, 2, 25.00, GETDATE(), 0x),
+(3, 3, 'Pan', 'Bimbo', 'PN003', 50, 3, 1.50, GETDATE(), 0x),
+(4, 4, 'Silla', 'Ikea', 'SL004', 15, 4, 75.00, GETDATE(), 0x),
+(5, 5, 'Libro', 'Pearson', 'LB005', 30, 5, 20.00, GETDATE(), 0x),
+(6, 6, 'Muñeca', 'Mattel', 'MN006', 25, 6, 15.00, GETDATE(), 0x),
+(7, 7, 'Martillo', 'Stanley', 'MT007', 40, 7, 12.00, GETDATE(), 0x),
+(8, 8, 'Balón', 'Adidas', 'BL008', 35, 8, 30.00, GETDATE(), 0x),
+(9, 9, 'Labial', 'L'Oréal', 'LB009', 50, 9, 10.00, GETDATE(), 0x),
+(10, 10, 'Collar', 'Pandora', 'CL010', 15, 10, 100.00, GETDATE(), 0x);
+
+-- Insertar datos en la tabla orden
+INSERT INTO dbo.orden (idUsuarios, idEstados, fechaCreacion, nombreCompleto, direccion, telefono, correoElectronico, fechaEntrega, totalOrden) VALUES
+(1, 1, GETDATE(), 'Cliente 1', 'Calle A', '1234567890', 'cliente1@example.com', '2024-12-25', 500.00),
+(2, 2, GETDATE(), 'Cliente 2', 'Calle B', '1234567891', 'cliente2@example.com', '2024-12-26', 300.00),
+(3, 3, GETDATE(), 'Cliente 3', 'Calle C', '1234567892', 'cliente3@example.com', '2024-12-27', 450.00),
+(4, 4, GETDATE(), 'Cliente 4', 'Calle D', '1234567893', 'cliente4@example.com', '2024-12-28', 600.00),
+(5, 5, GETDATE(), 'Cliente 5', 'Calle E', '1234567894', 'cliente5@example.com', '2024-12-29', 700.00),
+(6, 6, GETDATE(), 'Cliente 6', 'Calle F', '1234567895', 'cliente6@example.com', '2024-12-30', 800.00),
+(7, 7, GETDATE(), 'Cliente 7', 'Calle G', '1234567896', 'cliente7@example.com', '2024-12-31', 200.00),
+(8, 8, GETDATE(), 'Cliente 8', 'Calle H', '1234567897', 'cliente8@example.com', '2025-01-01', 150.00),
+(9, 9, GETDATE(), 'Cliente 9', 'Calle I', '1234567898', 'cliente9@example.com', '2025-01-02', 350.00),
+(10, 10, GETDATE(), 'Cliente 10', 'Calle J', '1234567899', 'cliente10@example.com', '2025-01-03', 250.00);
+
+-- Insertar datos en la tabla ordenDetalles
+INSERT INTO dbo.ordenDetalles (idOrden, idProductos, cantidad, precio, subtotal) VALUES
+(1, 1, 1, 500.00, 500.00),
+(2, 2, 2, 25.00, 50.00),
+(3, 3, 3, 1.50, 4.50),
+(4, 4, 2, 75.00, 150.00),
+(5, 5, 5, 20.00, 100.00),
+(6, 6, 1, 15.00, 90.00),
+(7, 7, 4, 12.00, 48.00),
+(8, 8, 3, 30.00, 90.00),
+(9, 9, 2, 10.00, 20.00),
+(10, 10, 1, 100.00, 100.00);
+
+
+========================================== EN JSON ==========================
+Aquí está el JSON completo con todos los datos: 
+
+```json
+{
+  "estados": [
+    { "nombre": "Activo" },
+    { "nombre": "Inactivo" },
+    { "nombre": "Pendiente" },
+    { "nombre": "Cancelado" },
+    { "nombre": "Completado" },
+    { "nombre": "En proceso" },
+    { "nombre": "Suspendido" },
+    { "nombre": "Finalizado" },
+    { "nombre": "Revisado" },
+    { "nombre": "Eliminado" }
+  ],
+  "rol": [
+    { "nombre": "Administrador" },
+    { "nombre": "Usuario" },
+    { "nombre": "Vendedor" },
+    { "nombre": "Cliente" },
+    { "nombre": "Soporte" },
+    { "nombre": "Gerente" },
+    { "nombre": "Supervisor" },
+    { "nombre": "Asistente" },
+    { "nombre": "Contador" },
+    { "nombre": "Operador" }
+  ],
+  "clientes": [
+    { "razonSocial": "Empresa A", "nombreComercial": "Comercial A", "direccionEntrega": "Calle 1", "telefono": "1234567890", "email": "empresaA@example.com" },
+    { "razonSocial": "Empresa B", "nombreComercial": "Comercial B", "direccionEntrega": "Calle 2", "telefono": "1234567891", "email": "empresaB@example.com" },
+    { "razonSocial": "Empresa C", "nombreComercial": "Comercial C", "direccionEntrega": "Calle 3", "telefono": "1234567892", "email": "empresaC@example.com" },
+    { "razonSocial": "Empresa D", "nombreComercial": "Comercial D", "direccionEntrega": "Calle 4", "telefono": "1234567893", "email": "empresaD@example.com" },
+    { "razonSocial": "Empresa E", "nombreComercial": "Comercial E", "direccionEntrega": "Calle 5", "telefono": "1234567894", "email": "empresaE@example.com" },
+    { "razonSocial": "Empresa F", "nombreComercial": "Comercial F", "direccionEntrega": "Calle 6", "telefono": "1234567895", "email": "empresaF@example.com" },
+    { "razonSocial": "Empresa G", "nombreComercial": "Comercial G", "direccionEntrega": "Calle 7", "telefono": "1234567896", "email": "empresaG@example.com" },
+    { "razonSocial": "Empresa H", "nombreComercial": "Comercial H", "direccionEntrega": "Calle 8", "telefono": "1234567897", "email": "empresaH@example.com" },
+    { "razonSocial": "Empresa I", "nombreComercial": "Comercial I", "direccionEntrega": "Calle 9", "telefono": "1234567898", "email": "empresaI@example.com" },
+    { "razonSocial": "Empresa J", "nombreComercial": "Comercial J", "direccionEntrega": "Calle 10", "telefono": "1234567899", "email": "empresaJ@example.com" }
+  ],
+  "usuarios": [
+    { "idRol": 1, "idEstados": 1, "correoElectronico": "admin@example.com", "nombreCompleto": "Admin User", "password": "pass123", "telefono": "1234567890", "fechaNacimiento": "1990-01-01", "fechaCreacion": "GETDATE()", "idClientes": 1 },
+    { "idRol": 2, "idEstados": 2, "correoElectronico": "user1@example.com", "nombreCompleto": "User One", "password": "pass123", "telefono": "1234567891", "fechaNacimiento": "1991-02-01", "fechaCreacion": "GETDATE()", "idClientes": 2 },
+    { "idRol": 3, "idEstados": 3, "correoElectronico": "user2@example.com", "nombreCompleto": "User Two", "password": "pass123", "telefono": "1234567892", "fechaNacimiento": "1992-03-01", "fechaCreacion": "GETDATE()", "idClientes": 3 },
+    { "idRol": 4, "idEstados": 4, "correoElectronico": "user3@example.com", "nombreCompleto": "User Three", "password": "pass123", "telefono": "1234567893", "fechaNacimiento": "1993-04-01", "fechaCreacion": "GETDATE()", "idClientes": 4 },
+    { "idRol": 5, "idEstados": 5, "correoElectronico": "user4@example.com", "nombreCompleto": "User Four", "password": "pass123", "telefono": "1234567894", "fechaNacimiento": "1994-05-01", "fechaCreacion": "GETDATE()", "idClientes": 5 },
+    { "idRol": 6, "idEstados": 6, "correoElectronico": "user5@example.com", "nombreCompleto": "User Five", "password": "pass123", "telefono": "1234567895", "fechaNacimiento": "1995-06-01", "fechaCreacion": "GETDATE()", "idClientes": 6 },
+    { "idRol": 7, "idEstados": 7, "correoElectronico": "user6@example.com", "nombreCompleto": "User Six", "password": "pass123", "telefono": "1234567896", "fechaNacimiento": "1996-07-01", "fechaCreacion": "GETDATE()", "idClientes": 7 },
+    { "idRol": 8, "idEstados": 8, "correoElectronico": "user7@example.com", "nombreCompleto": "User Seven", "password": "pass123", "telefono": "1234567897", "fechaNacimiento": "1997-08-01", "fechaCreacion": "GETDATE()", "idClientes": 8 },
+    { "idRol": 9, "idEstados": 9, "correoElectronico": "user8@example.com", "nombreCompleto": "User Eight", "password": "pass123", "telefono": "1234567898", "fechaNacimiento": "1998-09-01", "fechaCreacion": "GETDATE()", "idClientes": 9 },
+    { "idRol": 10, "idEstados": 10, "correoElectronico": "user9@example.com", "nombreCompleto": "User Nine", "password": "pass123", "telefono": "1234567899", "fechaNacimiento": "1999-10-01", "fechaCreacion": "GETDATE()", "idClientes": 10 }
+  ],
+  "categoriaProductos": [
+    { "idUsuarios": 1, "nombre": "Electrónica", "idEstados": 1, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 2, "nombre": "Ropa", "idEstados": 2, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 3, "nombre": "Alimentos", "idEstados": 3, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 4, "nombre": "Muebles", "idEstados": 4, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 5, "nombre": "Libros", "idEstados": 5, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 6, "nombre": "Juguetes", "idEstados": 6, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 7, "nombre": "Herramientas", "idEstados": 7, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 8, "nombre": "Deportes", "idEstados": 8, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 9, "nombre": "Cosméticos", "idEstados": 9, "fechaCreacion": "GETDATE()" },
+    { "idUsuarios": 10, "nombre": "Accesorios", "idEstados": 10, "fechaCreacion": "GETDATE()" }
+  ]
+  ]
+============================= PRODUCTOS =======================================
+[
+  {
+    "idCategoriaProductos": 1,
+    "idUsuarios": 1,
+    "nombre": "Televisor",
+    "marca": "Samsung",
+    "codigo": "TV001",
+    "stock": 10,
+    "idEstados": 1,
+    "precio": 500.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 2,
+    "idUsuarios": 2,
+    "nombre": "Camiseta",
+    "marca": "Nike",
+    "codigo": "CM002",
+    "stock": 20,
+    "idEstados": 2,
+    "precio": 25.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 3,
+    "idUsuarios": 3,
+    "nombre": "Pan",
+    "marca": "Bimbo",
+    "codigo": "PN003",
+    "stock": 50,
+    "idEstados": 3,
+    "precio": 1.50,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 4,
+    "idUsuarios": 4,
+    "nombre": "Silla",
+    "marca": "Ikea",
+    "codigo": "SL004",
+    "stock": 15,
+    "idEstados": 4,
+    "precio": 75.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 5,
+    "idUsuarios": 5,
+    "nombre": "Libro",
+    "marca": "Pearson",
+    "codigo": "LB005",
+    "stock": 30,
+    "idEstados": 5,
+    "precio": 20.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 6,
+    "idUsuarios": 6,
+    "nombre": "Muñeca",
+    "marca": "Mattel",
+    "codigo": "MN006",
+    "stock": 25,
+    "idEstados": 6,
+    "precio": 15.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 7,
+    "idUsuarios": 7,
+    "nombre": "Martillo",
+    "marca": "Stanley",
+    "codigo": "MT007",
+    "stock": 40,
+    "idEstados": 7,
+    "precio": 12.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 8,
+    "idUsuarios": 8,
+    "nombre": "Balón",
+    "marca": "Adidas",
+    "codigo": "BL008",
+    "stock": 35,
+    "idEstados": 8,
+    "precio": 30.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 9,
+    "idUsuarios": 9,
+    "nombre": "Labial",
+    "marca": "L'Oréal",
+    "codigo": "LB009",
+    "stock": 50,
+    "idEstados": 9,
+    "precio": 10.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  },
+  {
+    "idCategoriaProductos": 10,
+    "idUsuarios": 10,
+    "nombre": "Collar",
+    "marca": "Pandora",
+    "codigo": "CL010",
+    "stock": 15,
+    "idEstados": 10,
+    "precio": 100.00,
+    "fechaCreacion": "GETDATE()",
+    "foto": "0x"
+  }
+]
+```
+
+====================== ORDEN ===================================
+Aquí tienes los datos en formato JSON:
+
+```json
+[
+  {
+    "idUsuarios": 1,
+    "idEstados": 1,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 1",
+    "direccion": "Calle A",
+    "telefono": "1234567890",
+    "correoElectronico": "cliente1@example.com",
+    "fechaEntrega": "2024-12-25",
+    "totalOrden": 500.00
+  },
+  {
+    "idUsuarios": 2,
+    "idEstados": 2,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 2",
+    "direccion": "Calle B",
+    "telefono": "1234567891",
+    "correoElectronico": "cliente2@example.com",
+    "fechaEntrega": "2024-12-26",
+    "totalOrden": 300.00
+  },
+  {
+    "idUsuarios": 3,
+    "idEstados": 3,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 3",
+    "direccion": "Calle C",
+    "telefono": "1234567892",
+    "correoElectronico": "cliente3@example.com",
+    "fechaEntrega": "2024-12-27",
+    "totalOrden": 450.00
+  },
+  {
+    "idUsuarios": 4,
+    "idEstados": 4,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 4",
+    "direccion": "Calle D",
+    "telefono": "1234567893",
+    "correoElectronico": "cliente4@example.com",
+    "fechaEntrega": "2024-12-28",
+    "totalOrden": 600.00
+  },
+  {
+    "idUsuarios": 5,
+    "idEstados": 5,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 5",
+    "direccion": "Calle E",
+    "telefono": "1234567894",
+    "correoElectronico": "cliente5@example.com",
+    "fechaEntrega": "2024-12-29",
+    "totalOrden": 700.00
+  },
+  {
+    "idUsuarios": 6,
+    "idEstados": 6,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 6",
+    "direccion": "Calle F",
+    "telefono": "1234567895",
+    "correoElectronico": "cliente6@example.com",
+    "fechaEntrega": "2024-12-30",
+    "totalOrden": 800.00
+  },
+  {
+    "idUsuarios": 7,
+    "idEstados": 7,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 7",
+    "direccion": "Calle G",
+    "telefono": "1234567896",
+    "correoElectronico": "cliente7@example.com",
+    "fechaEntrega": "2024-12-31",
+    "totalOrden": 200.00
+  },
+  {
+    "idUsuarios": 8,
+    "idEstados": 8,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 8",
+    "direccion": "Calle H",
+    "telefono": "1234567897",
+    "correoElectronico": "cliente8@example.com",
+    "fechaEntrega": "2025-01-01",
+    "totalOrden": 150.00
+  },
+  {
+    "idUsuarios": 9,
+    "idEstados": 9,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 9",
+    "direccion": "Calle I",
+    "telefono": "1234567898",
+    "correoElectronico": "cliente9@example.com",
+    "fechaEntrega": "2025-01-02",
+    "totalOrden": 350.00
+  },
+  {
+    "idUsuarios": 10,
+    "idEstados": 10,
+    "fechaCreacion": "GETDATE()",
+    "nombreCompleto": "Cliente 10",
+    "direccion": "Calle J",
+    "telefono": "1234567899",
+    "correoElectronico": "cliente10@example.com",
+    "fechaEntrega": "2025-01-03",
+    "totalOrden": 250.00
+  }
+]
+```
+===================================== TABLA ORDEN DETALLE =====================================
+Aquí tienes los datos en formato JSON:
+
+```json
+[
+  {
+    "idOrden": 1,
+    "idProductos": 1,
+    "cantidad": 1,
+    "precio": 500.00,
+    "subtotal": 500.00
+  },
+  {
+    "idOrden": 2,
+    "idProductos": 2,
+    "cantidad": 2,
+    "precio": 25.00,
+    "subtotal": 50.00
+  },
+  {
+    "idOrden": 3,
+    "idProductos": 3,
+    "cantidad": 3,
+    "precio": 1.50,
+    "subtotal": 4.50
+  },
+  {
+    "idOrden": 4,
+    "idProductos": 2,
+    "cantidad": 2,
+    "precio": 75.00,
+    "subtotal": 150.00
+  },
+  {
+    "idOrden": 5,
+    "idProductos": 5,
+    "cantidad": 5,
+    "precio": 20.00,
+    "subtotal": 100.00
+  },
+  {
+    "idOrden": 6,
+    "idProductos": 1,
+    "cantidad": 6,
+    "precio": 15.00,
+    "subtotal": 90.00
+  },
+  {
+    "idOrden": 7,
+    "idProductos": 4,
+    "cantidad": 4,
+    "precio": 12.00,
+    "subtotal": 48.00
+  },
+  {
+    "idOrden": 8,
+    "idProductos": 3,
+    "cantidad": 3,
+    "precio": 30.00,
+    "subtotal": 90.00
+  },
+  {
+    "idOrden": 9,
+    "idProductos": 2,
+    "cantidad": 2,
+    "precio": 10.00,
+    "subtotal": 20.00
+  },
+  {
+    "idOrden": 10,
+    "idProductos": 1,
+    "cantidad": 1,
+    "precio": 100.00,
+    "subtotal": 100.00
+  }
+]
+```

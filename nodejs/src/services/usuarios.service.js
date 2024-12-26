@@ -1,6 +1,7 @@
 //const {connection} = require('../config/database');
 const sequelize = require('../config/database');
 const usuarios = require('../models/usuarios.model');
+const {encriptarContrasenia} = require('../models/encriptar.model');
 
 exports.obtenerTodosUsuarios = async () => {
     
@@ -24,9 +25,12 @@ exports.obtenerUsuariosPorId = async (idUsuario) => {
  * @returns 
  */
 exports.crearUsuarios = async (datoUsuario)=>{
-    const {idRol, idEstados, correoElectronico, nombreCompleto, password, telefono, fechaNacimiento, idClientes} = datoUsuario;
+    let {idRol, idEstados, correoElectronico, nombreCompleto, password, telefono, fechaNacimiento, idClientes} = datoUsuario;
     
     try {
+        const contraseniaEncriptada = await encriptarContrasenia(password);
+        password = contraseniaEncriptada;
+
         const result = await sequelize.query(
           'EXEC spInsertarUsuario :idRol, :idEstados, :correoElectronico, :nombreCompleto, :password, :telefono, :fechaNacimiento, :idClientes',
           {

@@ -19,6 +19,7 @@ const categoriaProductosRoute = require('./routes/categoriaProductos.routes');
 const ordenRoute = require('./routes/orden.routes');
 const productosRoute = require('./routes/productos.routes');
 const ordenDetalleRoute = require('./routes/ordenDetalle.routes');
+const iniciarSesionRoute = require('./routes/iniciarSesion.routes');
 
 //morgarn
 app.use(morgan('tiny'))
@@ -37,6 +38,7 @@ app.use('/', categoriaProductosRoute);
 app.use('/', ordenRoute);
 app.use('/', productosRoute);
 app.use('/', ordenDetalleRoute);
+app.use('/', iniciarSesionRoute);
 
 // Puerto de escucha
 const PORT = process.env.PORT || 4000;

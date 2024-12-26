@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const verificarToken = require('../middlewares/verificarToken');
+const verificarToken = require('../middlewares/verificacionToken');
 const {obtenerTodosRol, obtenerRolPorId, crearRol, actualizarRol, borrarRol} = require('../controllers/rol.controller');
 
 router.get('/listaRol', verificarToken, obtenerTodosRol);

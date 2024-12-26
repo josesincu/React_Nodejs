@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const verificarToken = require('../middlewares/verificarToken');
+const verificarToken = require('../middlewares/verificacionToken');
 const {obtenerTodosEstados, obtenerEstadosPorId, crearEstados, actualizarEstados, borrarEstados} = require('../controllers/estados.controller');
 
 router.get('/listaEstado', verificarToken, obtenerTodosEstados);

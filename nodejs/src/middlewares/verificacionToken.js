@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config({path: '../.env'});
+//require('dotenv').config();
 
 // Clave secreta para firmar los tokens JWT (guárdala en variables de entorno)
 const JWT_SECRET = process.env.JWT_SECRET;
