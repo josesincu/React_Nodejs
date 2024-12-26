@@ -6,17 +6,29 @@
 ===========================================================================================================
 */
 
+-- Cambiar a master para eliminar todas las instancias 
+USE master;
+
+-- Eliminar la base de datos si existe
+GO
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'GDA0063-OT_joseCastroSincu')
+BEGIN
+    DROP DATABASE [GDA0063-OT_joseCastroSincu];
+END;
+
 /*
 *	En el Codigo se uso la convencion de camelCase
 *	Creacion de la base de datos si no existe
 */
-
+GO
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'GDA0063-OT_joseCastroSincu')
 BEGIN
     CREATE DATABASE [GDA0063-OT_joseCastroSincu];
 END;
 
+
 -- usando la base de datos
+GO
 USE [GDA0063-OT_joseCastroSincu];
  
 /*
@@ -24,6 +36,7 @@ USE [GDA0063-OT_joseCastroSincu];
 */
 
 -- Tabla Cliente
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -41,7 +54,9 @@ BEGIN
     );
 END;
 
+
 -- Tabla Estados
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -57,6 +72,7 @@ END;
 
 
 -- Tabla Rol
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -72,6 +88,7 @@ END;
 
 
 -- Tabla Usuarios
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -93,7 +110,9 @@ BEGIN
     );
 END;
 
+
 -- Tabla Categoria Productos
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -112,6 +131,7 @@ END;
 
 
 -- Tabla Orden
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -135,6 +155,7 @@ END;
 
 
 -- Tabla Productos
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -157,7 +178,9 @@ BEGIN
     );
 END;
 
+
 -- Tabla Orden Detalle
+GO
 IF NOT EXISTS (
     SELECT 1 
     FROM INFORMATION_SCHEMA.TABLES 
@@ -174,6 +197,7 @@ BEGIN
 		subtotal FLOAT
     );
 END;
+
 /*
 ==========================================================================================================
 
@@ -201,7 +225,6 @@ BEGIN
         @razonSocial, @nombreComercial, @direccionEntrega, @telefono, @email
     );
 END;
-GO
 
 -- Modificar datos de tabal cliente
 GO
@@ -225,7 +248,6 @@ BEGIN
         email = @email
     WHERE idClientes = @idClientes;
 END;
-GO
 
 
 /*
@@ -247,7 +269,7 @@ BEGIN
     INSERT INTO dbo.rol (nombre)
     VALUES (@nombre);
 END;
-GO
+
 
 -- Modificar rol en tabla
 GO
@@ -262,7 +284,7 @@ BEGIN
     SET nombre = @nombre
     WHERE idRol = @idRol;
 END;
-GO
+
 
 
 /*
@@ -284,10 +306,10 @@ BEGIN
     INSERT INTO dbo.estados (nombre)
     VALUES (@nombre);
 END;
-GO
 
 
 -- Modificar estado en tabla
+GO
 CREATE PROCEDURE spModificarEstado
 (
     @idEstados INT,
@@ -299,10 +321,6 @@ BEGIN
     SET nombre = @nombre
     WHERE idEstados = @idEstados;
 END;
-GO
-
-
-
 
 
 /*
@@ -312,9 +330,9 @@ GO
 
 ===========================================================================================================
 */
-GO
 
 -- Inserter un nuevo usuario en la tabla
+GO
 CREATE PROCEDURE spInsertarUsuario
 (
     @idRol INT,
@@ -328,18 +346,32 @@ CREATE PROCEDURE spInsertarUsuario
 )
 AS
 BEGIN
-    INSERT INTO dbo.usuarios (
-        idRol, idEstados, correoElectronico, nombreCompleto, password, telefono, fechaNacimiento, fechaCreacion, idClientes
-    )
-    VALUES (
-        @idRol, @idEstados, @correoElectronico, @nombreCompleto, @password, @telefono, @fechaNacimiento, GETDATE(), @idClientes
-    );
+	IF dbo.fnEsValidoCorreo(@correoElectronico) = 1
+	BEGIN
+		IF dbo.fnEsCorreoRepetido(@correoElectronico) = 0
+			BEGIN
+				INSERT INTO dbo.usuarios (
+					idRol, idEstados, correoElectronico, nombreCompleto, password, telefono, fechaNacimiento, fechaCreacion, idClientes
+				)
+				VALUES (
+					@idRol, @idEstados, @correoElectronico, @nombreCompleto, @password, @telefono, @fechaNacimiento,  GETDATE(), @idClientes
+				);
+				SELECT 'Usuario registrado exitosamente' AS resultado;
+			END;
+		ELSE
+			BEGIN
+				SELECT -1 AS resultado;
+			END;
+	END;
+	ELSE
+		BEGIN
+			SELECT -2 AS resultado;
+		END;
 END;
 
-GO
 
 -- Modificar un usuario en la tabla
-
+GO
 CREATE PROCEDURE spModificarUsuario
 (
     @idUsuarios INT,
@@ -366,7 +398,7 @@ BEGIN
         idClientes = @idClientes
     WHERE idUsuarios = @idUsuarios;
 END;
-GO
+
 
 /*
 ==========================================================================================================
@@ -375,6 +407,7 @@ GO
 
 ===========================================================================================================
 */
+
  -- Insertar una nueva categorioa productos
 GO
 CREATE PROCEDURE spInsertarCategoriaProducto
@@ -389,13 +422,13 @@ BEGIN
         idUsuarios, nombre, idEstados, fechaCreacion
     )
     VALUES (
-        @idUsuarios, @nombre, @idEstados, GETDATE()
+        @idUsuarios, @nombre, @idEstados,  GETDATE()
     );
 END;
-GO
+
 
 -- Modificar una categoria de productos
-
+GO
 CREATE PROCEDURE spModificarCategoriaProducto
 (
     @idCategoriaProductos INT,
@@ -412,8 +445,6 @@ BEGIN
         idEstados = @idEstados
     WHERE idCategoriaProductos = @idCategoriaProductos;
 END;
-GO
-
 
 
 /*
@@ -425,6 +456,7 @@ GO
 */
 
 -- Insertar una nueva orden
+GO
 CREATE PROCEDURE spInsertarOrden
 (
     @idUsuarios INT,
@@ -442,12 +474,13 @@ BEGIN
         idUsuarios, idEstados, fechaCreacion, nombreCompleto, direccion, telefono, correoElectronico, fechaEntrega, totalOrden
     )
     VALUES (
-        @idUsuarios, @idEstados, GETDATE(), @nombreCompleto, @direccion, @telefono, @correoElectronico, @fechaEntrega, @totalOrden
+        @idUsuarios, @idEstados,  GETDATE(), @nombreCompleto, @direccion, @telefono, @correoElectronico, @fechaEntrega, @totalOrden
     );
 END;
-GO
+
 
 -- Modificar una orden
+GO
 CREATE PROCEDURE spModificarOrden
 (
     @idOrden INT,
@@ -474,8 +507,6 @@ BEGIN
         totalOrden = @totalOrden
     WHERE idOrden = @idOrden;
 END;
-GO
-
 
 
 /*
@@ -506,12 +537,13 @@ BEGIN
         idCategoriaProductos, idUsuarios, nombre, marca, codigo, stock, idEstados, precio, fechaCreacion, foto
     )
     VALUES (
-        @idCategoriaProductos, @idUsuarios, @nombre, @marca, @codigo, @stock, @idEstados, @precio, GETDATE(), @foto
+        @idCategoriaProductos, @idUsuarios, @nombre, @marca, @codigo, @stock, @idEstados, @precio,  GETDATE(), @foto
     );
 END;
-GO
+
 
 -- Modificar un producto
+GO
 CREATE PROCEDURE spModificarProducto
 (
     @idProductos INT,
@@ -540,8 +572,6 @@ BEGIN
         foto = @foto
     WHERE idProductos = @idProductos;
 END;
-GO
-
 
 
 /*
@@ -553,8 +583,8 @@ GO
 */
 
 -- Insertar una nueva orden detalle
-
-CREATE PROCEDURE InsertarOrdenDetalle
+GO
+CREATE PROCEDURE spInsertarOrdenDetalle
 (
     @idOrden INT,
     @idProductos INT,
@@ -571,10 +601,11 @@ BEGIN
         @idOrden, @idProductos, @cantidad, @precio, @subtotal
     );
 END;
-GO
+
 
 -- Modificar una orden
-CREATE PROCEDURE ModificarOrdenDetalle
+GO
+CREATE PROCEDURE spModificarOrdenDetalle
     @idOrdenDetalles INT,
     @idOrden INT,
     @idProductos INT,
@@ -592,7 +623,70 @@ BEGIN
         subtotal = @subtotal
     WHERE idOrdenDetalles = @idOrdenDetalles;
 END;
+
+
+/*
+==========================================================================================================
+
+	 INICIO DE PROCEDIMIENTOS PARA USUARIO LOGIN
+
+===========================================================================================================
+*/
+
+-- Obtener datos iniciar sesion
 GO
+CREATE PROCEDURE spIniciarSesion
+    @correoElectronico VARCHAR(45),
+    @contrasena VARCHAR(45)
+AS
+BEGIN
+    SELECT * FROM usuarios WHERE correoElectronico = @correoElectronico;
+END;
+
+
+/*
+==========================================================================================================
+
+	 INICIO DE FUNCIONES  PARA USUARIO LOGIN
+
+===========================================================================================================
+*/
+-- Validar si el correo tiene forma correcta
+GO
+CREATE FUNCTION dbo.fnEsValidoCorreo(@correo VARCHAR(45))
+RETURNS BIT
+AS
+BEGIN
+    RETURN CASE 
+        WHEN @correo LIKE '%@%.%' -- Asegura que tenga "@" y un dominio con "."
+             AND PATINDEX('%[^a-zA-Z0-9.@]%', @correo) = 0 -- No permite caracteres no válidos
+        THEN 1
+        ELSE 0
+    END;
+END;
+
+
+-- Validar si el correo es repetido
+GO  
+CREATE FUNCTION dbo.fnEsCorreoRepetido(@correo VARCHAR(45))
+RETURNS BIT
+AS
+BEGIN
+	DECLARE @repetido VARCHAR(45);
+	DECLARE @esRepetido BIT;
+
+    SELECT @repetido = correoElectronico  FROM usuarios WHERE correoElectronico = @correo;
+	IF @repetido = @correo
+	BEGIN
+		SET @esRepetido = 1;
+		
+	END;
+	ELSE
+	BEGIN
+		SET @esRepetido = 0;
+	END;
+	RETURN @esRepetido;
+END;
 
 
 /*
@@ -606,7 +700,7 @@ GO
 /*
  a) Total de Productos activos que tenga en stock mayor a 0 
 */
-
+GO
 CREATE VIEW totalProductosActivos AS
 SELECT 
     COUNT(*) AS totalProductosActivos
@@ -656,6 +750,7 @@ LIMIT 10;
 /*
 *	d) Top 10 de productos más vendidos en orden ascendente
 */
+GO
 CREATE VIEW topProductosVendidos AS
 SELECT 
     p.nombre AS producto,
@@ -672,8 +767,32 @@ LIMIT 10;
 
 
 
+-- ==================== INSERT PERSONALES ==============================
+GO
+EXEC dbo.spInsertarRol @nombre = 'Administrador';
 
+GO
+EXEC dbo.spInsertarEstado @nombre = 'Activo';
+
+GO
+EXEC dbo.spInsertarUsuario @idRol = 1, @idEstados = 1, @correoElectronico = 'Admin.1@gmail.com', @nombreCompleto = 'admin admin', @password = '12345678',  @telefono = '123456789', @fechaNacimiento = '2024-12-26', @idClientes = NULL;
+
+GO
+SELECT dbo.fnEsValidoCorreo('admin12@gmail.com') AS Resultado;
+
+GO
+SELECT * FROM rol;
+
+GO
+SELECT * FROM usuarios;
 
 
 -- ==============================
+GO
 SELECT * FROM [dbo].[clientes];
+
+
+
+-- =========================== CONSULTAS PERSONALES ================================
+GO
+SELECT * FROM Clientes c;
